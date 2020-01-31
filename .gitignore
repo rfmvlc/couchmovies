@@ -28,7 +28,6 @@ hs_err_pid*
 .DS_*
 *.zip
 *.csv
-*.txt
 .*
 gradle
 *.iml
