@@ -2,6 +2,7 @@ package com.couchbase.demo.couchmovies.data;
 
 import com.couchbase.client.java.ReactiveCollection;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.demo.couchmovies.util.FluxTracer;
 import org.slf4j.Logger;
@@ -23,6 +24,9 @@ public class SDKAsyncRepo {
     private ReactiveCollection collection;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public GetResult get(JsonObject o){
+        return collection.get(o.getString("key")).block();
+    }
 
     public Flux<MutationResult> batchUpsert(Flux<JsonObject> o) {
 

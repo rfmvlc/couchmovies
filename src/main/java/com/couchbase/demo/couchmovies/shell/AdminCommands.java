@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.standard.commands.Quit;
 
 @Lazy
 @ShellComponent
-public class AdminCommands {
+public class AdminCommands implements Quit.Command {
 
     @Autowired
     MoviesService moviesService;
@@ -22,7 +23,6 @@ public class AdminCommands {
     @Autowired
     TagsService tagsService;
 
-// TODO: not finished yet!
 //    @Autowired
 //    DownloadService moviesDownloadService;
 
@@ -40,13 +40,17 @@ public class AdminCommands {
 
     }
 
-    @ShellMethod(value = "rate a movie")
-    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") long rating) {
+//    @ShellMethod(value = "rate a movie")
+//    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") long rating) {
+//        ratingsService.rate(userId, movieId, rating);
+//    }
 
-        ratingsService.rate(userId, movieId, rating);
-
+    @ShellMethod(value = "Exit the shell.", key = {"quit", "exit"})
+    public void quit() {
+        System.exit(0); //HACK!
     }
-// TODO: not finished yet!
+
+
 //
 //    @ShellMethod(value = "Load tags")
 //    public void addTags(@ShellOption(defaultValue = "0") int limit) {
