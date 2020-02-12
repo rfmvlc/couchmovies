@@ -5,27 +5,29 @@
 - Maven 3.x
 
 > Setup your environment as described on Java SDK docs [here](https://docs.couchbase.com/java-sdk/current/hello-world/start-using-sdk.html)
-# Download the dataset on the user's home folder:
+# Dataset
 
+## Download zip file
 ```
-$ cd ~
-$ wget http://files.grouplens.org/datasets/movielens/ml-latest.zip
+$ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.zip
 ```
 
-# Extract the zip file and rename the directory to Movies:
+## Extract the zip file and copy content to movie's folder
 
+> Example
 ```
-$ nice unzip -j "ml-latest.zip"
-$ mv ml-latest Movies
+$  unzip -j "movies.zip" -d ~/movies
 ``` 
 
 # Create movies bucket 
 
 > Create your "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
 
-# Configure settings on `resources/application.properties`
+# Configure settings
+ 
+ > File: `resources/application.properties`
 
-Adjust to your environment settings 
+Adjust to your environment settings: 
 ```
 # Cluster nodes
 ## List of nodes comma separated. At least (replica number + 1) nodes here
@@ -34,6 +36,8 @@ com.couchbase.demo.couchmovies.connection-string=couchbase://*****
 com.couchbase.demo.couchmovies.bucket-name=*****
 com.couchbase.demo.couchmovies.username=*****
 com.couchbase.demo.couchmovies.password=******
+# Movies dataset
+com.couchbase.demo.couchmovies.home=${user.home}/Movies
 ```
 
 # Run the application
@@ -72,16 +76,15 @@ $ mvn spring-boot:run
   [INFO]
   [INFO] --- spring-boot-maven-plugin:2.1.7.RELEASE:run (default-cli) @ couchmovies ---
   
-     ___                 _                       _
-    / __\___  _   _  ___| |__   /\/\   _____   _(_) ___  ___
-   / /  / _ \| | | |/ __| '_ \ /    \ / _ \ \ / / |/ _ \/ __|
-  / /__| (_) | |_| | (__| | | / /\/\ \ (_) \ V /| |  __/\__ \
-  \____/\___/ \__,_|\___|_| |_\/    \/\___/ \_/ |_|\___||___/
-  
-  
-  
-  
-  shell:>
+   ___                 _                       _
+  / __\___  _   _  ___| |__   /\/\   _____   _(_) ___  ___
+ / /  / _ \| | | |/ __| '_ \ /    \ / _ \ \ / / |/ _ \/ __|
+/ /__| (_) | |_| | (__| | | / /\/\ \ (_) \ V /| |  __/\__ \
+\____/\___/ \__,_|\___|_| |_\/    \/\___/ \_/ |_|\___||___/
+
+ :: Sample application build with Spring Boot (v2.1.7.RELEASE) ::
+
+ shell:>
 ```
 
 # Commands 

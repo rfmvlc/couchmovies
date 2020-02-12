@@ -1,7 +1,7 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.demo.couchmovies.vo.Movie;
+import com.couchbase.demo.couchmovies.service.vo.Movie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;

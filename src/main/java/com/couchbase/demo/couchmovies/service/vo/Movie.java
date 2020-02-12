@@ -1,4 +1,4 @@
-package com.couchbase.demo.couchmovies.vo;
+package com.couchbase.demo.couchmovies.service.vo;
 
 import java.util.List;
 

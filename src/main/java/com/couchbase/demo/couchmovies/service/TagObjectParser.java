@@ -1,7 +1,7 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.demo.couchmovies.vo.Rating;
+import com.couchbase.demo.couchmovies.api.dto.RatingRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -21,10 +21,7 @@ public class TagObjectParser implements ToJsonObjectParser {
         return fromCsvFile(limit).flatMap(
                 t -> {
                     JsonObject tag = JsonObject.create();
-                    Rating r = new Rating(Long.valueOf(t[0]), Long.valueOf(t[1]), 0);
-                    List<String> tags = new ArrayList<>();
-                    tags.add(t[2]);
-                    r.setTags(tags);
+                    // TODO: Implement parsing
                     // parsing
                     tag.put("tags", t[2]);
                     return Flux.just(tag);

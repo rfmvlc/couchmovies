@@ -2,18 +2,14 @@ package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.demo.couchmovies.api.dto.RatingRequest;
 import com.couchbase.demo.couchmovies.data.SDKAsyncRepo;
-import com.couchbase.demo.couchmovies.vo.Rating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
 
 @Service
 @Validated
@@ -35,11 +31,9 @@ public class RatingsService {
         loader.load(ratingParser, this.getClass().getName(), limit);
     }
 
-    public String rate(@Min(1) Number userId,
-                           @Min(1) Number movieId,
-                           @DecimalMin("1.0") @DecimalMax("5.0") Number rating) {
+    public String rate(RatingRequest ratingRequest) {
 
-        JsonObject request = ratingParser.ratingToJson(new Rating(userId, movieId, rating));
+        JsonObject request = ratingParser.ratingToJson(ratingRequest);
         Long cas = sdkAsyncRepo.upsert(request).block().cas();
         GetResult result = sdkAsyncRepo.get(request);
 
