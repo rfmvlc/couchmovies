@@ -1,5 +1,6 @@
 package com.couchbase.demo.couchmovies.shell;
 
+import com.couchbase.demo.couchmovies.api.dto.RatingRequest;
 import com.couchbase.demo.couchmovies.service.MoviesService;
 import com.couchbase.demo.couchmovies.service.RatingsService;
 import com.couchbase.demo.couchmovies.service.TagsService;
@@ -40,10 +41,10 @@ public class AdminCommands implements Quit.Command {
 
     }
 
-//    @ShellMethod(value = "rate a movie")
-//    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") long rating) {
-//        ratingsService.rate(userId, movieId, rating);
-//    }
+    @ShellMethod(value = "rate a movie")
+    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") float rating) {
+        System.out.println(ratingsService.rate(new RatingRequest(userId,movieId,rating)));
+    }
 
     @ShellMethod(value = "Exit the shell.", key = {"quit", "exit"})
     public void quit() {

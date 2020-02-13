@@ -30,14 +30,14 @@ $  unzip -j "movies.zip" -d ~/movies
 Adjust to your environment settings: 
 ```
 # Cluster nodes
-## List of nodes comma separated. At least (replica number + 1) nodes here
+## List of nodes comma separated
 com.couchbase.demo.couchmovies.connection-string=couchbase://*****
 # Bucket + Credentials
 com.couchbase.demo.couchmovies.bucket-name=*****
 com.couchbase.demo.couchmovies.username=*****
 com.couchbase.demo.couchmovies.password=******
 # Movies dataset
-com.couchbase.demo.couchmovies.home=${user.home}/Movies
+com.couchbase.demo.couchmovies.home=*****
 ```
 
 # Run the application
@@ -48,7 +48,7 @@ $ mvn spring-boot:run
   [INFO] Scanning for projects...
   [INFO]
   [INFO] -------------------< com.couchbase.demo:couchmovies >-------------------
-  [INFO] Building couchmovies 1.0.0
+  [INFO] Building couchmovies 1.3.0
   [INFO] --------------------------------[ jar ]---------------------------------
   [INFO]
   [INFO] >>> spring-boot-maven-plugin:2.1.7.RELEASE:run (default-cli) > test-compile @ couchmovies >>>
@@ -125,4 +125,33 @@ OPTIONS
 	--rating  long
 
 		[Optional, default = 1]
+```
+
+## rate a movie
+```
+shell:>rate 1 1 4.5
+{"rating":4.5,"movieId":1,"type":"rating","userId":1,"key":"rating::1::1","timestamp":1581551670623}
+```
+
+## have an error? don't sweat *stacktrace* will help you out!
+```
+shell:>rate maverick iceman loren ipsum
+Too many arguments: the following could not be mapped to parameters: 'ipsum'
+Details of the error have been omitted. You can use the stacktrace command to print the full stacktrace.
+shell:>stacktrace
+java.lang.IllegalArgumentException: Too many arguments: the following could not be mapped to parameters: 'ipsum'
+	at org.springframework.util.Assert.isTrue(Assert.java:118)
+	at org.springframework.shell.standard.StandardParameterResolver.lambda$resolve$4(StandardParameterResolver.java:218)
+	at java.util.concurrent.ConcurrentMap.computeIfAbsent(ConcurrentMap.java:324)
+	at org.springframework.shell.standard.StandardParameterResolver.resolve(StandardParameterResolver.java:138)
+	at org.springframework.shell.Shell.resolveArgs(Shell.java:316)
+	at org.springframework.shell.Shell.evaluate(Shell.java:177)
+	at org.springframework.shell.Shell.run(Shell.java:142)
+	at org.springframework.shell.jline.InteractiveShellApplicationRunner.run(InteractiveShellApplicationRunner.java:84)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:771)
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:761)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:319)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1214)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1203)
+	at com.couchbase.demo.couchmovies.Application.main(Application.java:14)
 ```
