@@ -111,7 +111,7 @@ NAME
 	rate - rate a movie
 
 SYNOPSYS
-	rate [[--user-id] long]  [[--movie-id] long]  [[--rating] long]
+	rate [[--user-id] long]  [[--movie-id] long]  [[--rating] float]
 
 OPTIONS
 	--user-id  long
@@ -122,9 +122,9 @@ OPTIONS
 
 		[Optional, default = 1]
 
-	--rating  long
+	--rating  float
 
-		[Optional, default = 1]
+		[Optional, default = 1.0]
 ```
 
 ## rate a movie
