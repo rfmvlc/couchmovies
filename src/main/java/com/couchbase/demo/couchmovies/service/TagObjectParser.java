@@ -9,6 +9,9 @@ import reactor.core.publisher.Flux;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.couchbase.demo.couchmovies.service.vo.Movie.MOVIE_KEY_MASK;
+import static java.lang.String.format;
+
 @Component
 public class TagObjectParser implements ToJsonObjectParser {
 
@@ -21,8 +24,7 @@ public class TagObjectParser implements ToJsonObjectParser {
         return fromCsvFile(limit).flatMap(
                 t -> {
                     JsonObject tag = JsonObject.create();
-                    // TODO: Implement parsing
-                    // parsing
+                    tag.put("key", format(MOVIE_KEY_MASK, t[0]));
                     tag.put("tags", t[2]);
                     return Flux.just(tag);
                 });

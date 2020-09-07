@@ -74,6 +74,4 @@ public class FluxTracer<T> {
         logger.debug(String.format(PROGRESS_STATUS_MSG, task, status, oks, errors));
 
     }
-
-
 }

@@ -29,20 +29,16 @@ public class AdminCommands implements Quit.Command {
 
     @ShellMethod(value = "Load movies")
     public void loadMovies(@ShellOption(defaultValue = "0") int limit) {
-
         moviesService.load(limit);
-
     }
 
     @ShellMethod(value = "Load ratings")
     public void loadRatings(@ShellOption(defaultValue = "0") int limit) {
-
         ratingsService.load(limit);
-
     }
 
     @ShellMethod(value = "rate a movie")
-    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") float rating) {
+    public void rate(@ShellOption(defaultValue = "1.0") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") float rating) {
         System.out.println(ratingsService.rate(new RatingRequest(userId,movieId,rating)));
     }
 
@@ -52,20 +48,15 @@ public class AdminCommands implements Quit.Command {
     }
 
 
-//
-//    @ShellMethod(value = "Load tags")
-//    public void addTags(@ShellOption(defaultValue = "0") int limit) {
-//
-//        tagsService.addTags(limit);
-//
-//    }
-//
-//    @ShellMethod(value = "Remove tags")
-//    public void removeTags() {
-//
-//        tagsService.removeTags();
-//
-//    }
+    @ShellMethod(value = "Load tags")
+    public void addTags(@ShellOption(defaultValue = "0") int limit) {
+        tagsService.addTags(limit);
+    }
+
+    @ShellMethod(value = "Remove tags")
+    public void removeTags() {
+        tagsService.removeTags();
+    }
 
 //    @ShellMethod("Download couchmovies dataset")
 //    public void downloadMovies() {

@@ -11,6 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Application {
 
     public static void main(String[] args) {
+        System.setProperty("com.couchbase.autoReleaseAfter", "10000");
         SpringApplication.run(Application.class, args);
 
     }
