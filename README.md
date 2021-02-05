@@ -1,6 +1,8 @@
 # Pre-requisites
 
-- Couchbase Server 6.5.x
+- Couchbase Server 7.x (collections enabled)
+- - movies
+- - ratings
 - Java 1.8.x
 - Maven 3.x
 
