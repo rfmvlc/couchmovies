@@ -1,8 +1,6 @@
 # Pre-requisites
 
 - Couchbase Server 7.x (collections enabled)
-- - movies
-- - ratings
 - Java 1.8.x
 - Maven 3.x
 
@@ -21,9 +19,11 @@ $ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.
 $  unzip -j "movies.zip" -d ~/movies
 ``` 
 
-# Create movies bucket 
+# Create movies bucket and collections 
 
-> Create your "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
+> Create "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
+
+> Create "movies" and "ratings" collections as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/developer-preview/collections/manage-collections-with-rest.html) 
 
 # Configure settings
  
