@@ -1,5 +1,7 @@
 package com.couchbase.demo.couchmovies.service;
 
+import com.couchbase.client.java.ReactiveBucket;
+import com.couchbase.client.java.ReactiveCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,15 @@ public class MoviesService {
     @Autowired
     MoviesParser movieParser;
 
+    private ReactiveCollection collection;
+
+    public MoviesService(@Autowired ReactiveBucket bucket) {
+        collection = bucket.collection("movies");
+    }
+
     @Async
     public void load(int limit) {
-        loader.load(movieParser, this.getClass().getName(), limit);
+        loader.load(collection, movieParser, this.getClass().getName(), limit);
     }
 
 }

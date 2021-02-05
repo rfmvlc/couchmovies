@@ -8,7 +8,6 @@ import com.couchbase.client.java.kv.MutationResult;
 import com.couchbase.demo.couchmovies.util.FluxTracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,20 +16,20 @@ import java.util.Collections;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-import static com.couchbase.client.java.kv.MutateInSpec.*;
+import static com.couchbase.client.java.kv.MutateInSpec.arrayPrepend;
+import static com.couchbase.client.java.kv.MutateInSpec.remove;
 
 @Repository
 public class SDKAsyncRepo {
 
-    @Autowired
-    private ReactiveCollection collection;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public GetResult get(JsonObject o){
+    public GetResult get(ReactiveCollection collection, JsonObject o) {
         return collection.get(o.getString("key")).block();
     }
 
-    public Flux<MutationResult> batchUpsert(Flux<JsonObject> o) {
+    public Flux<MutationResult> batchUpsert(ReactiveCollection collection, Flux<JsonObject> o) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
 
@@ -40,14 +39,14 @@ public class SDKAsyncRepo {
 
     }
 
-    public Mono<MutationResult> upsert(JsonObject o) {
+    public Mono<MutationResult> upsert(ReactiveCollection collection, JsonObject o) {
 
         return collection.upsert(o.getString("key"), o);
 
 
     }
 
-    public Mono<MutateInResult> upsertSubDoc(String key) {
+    public Mono<MutateInResult> upsertSubDoc(ReactiveCollection collection, String key) {
 
         return collection.mutateIn(key, Collections.singletonList(
                 arrayPrepend("tags", Collections.singletonList(UUID.randomUUID().toString()))
@@ -56,7 +55,7 @@ public class SDKAsyncRepo {
 
     }
 
-    public Flux<MutateInResult> batchAddTags(Flux<JsonObject> o) {
+    public Flux<MutateInResult> batchAddTags(ReactiveCollection collection, Flux<JsonObject> o) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchAddTags");
 
@@ -76,7 +75,7 @@ public class SDKAsyncRepo {
 
     }
 
-    public Flux<MutationResult> batchRemoveTags(Flux<JsonObject> o) {
+    public Flux<MutationResult> batchRemoveTags(ReactiveCollection collection, Flux<JsonObject> o) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchRemoveTags");
 

@@ -2,7 +2,10 @@ package com.couchbase.demo.couchmovies.config;
 
 
 import com.couchbase.client.core.env.CompressionConfig;
-import com.couchbase.client.java.*;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.ReactiveBucket;
+import com.couchbase.client.java.ReactiveCluster;
 import com.couchbase.client.java.env.ClusterEnvironment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -42,10 +45,10 @@ public class CouchbaseConfig {
     public ReactiveBucket bucket(ReactiveCluster cluster) {
         return cluster.bucket(bucketName);
     }
-
+    /*
     @Bean
     public ReactiveCollection collection(ReactiveBucket bucket) {
         return bucket.defaultCollection();
     }
-
+    */
 }

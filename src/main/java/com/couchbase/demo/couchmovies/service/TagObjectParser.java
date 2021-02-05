@@ -1,13 +1,9 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.demo.couchmovies.api.dto.RatingRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.couchbase.demo.couchmovies.service.vo.Movie.MOVIE_KEY_MASK;
 import static java.lang.String.format;

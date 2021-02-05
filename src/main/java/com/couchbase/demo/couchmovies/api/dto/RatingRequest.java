@@ -4,8 +4,6 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 
-import static java.lang.String.format;
-
 public class RatingRequest {
 
     private @Min(1) long userId;

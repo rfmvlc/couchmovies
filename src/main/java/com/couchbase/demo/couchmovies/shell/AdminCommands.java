@@ -38,8 +38,8 @@ public class AdminCommands implements Quit.Command {
     }
 
     @ShellMethod(value = "rate a movie")
-    public void rate(@ShellOption(defaultValue = "1.0") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") float rating) {
-        System.out.println(ratingsService.rate(new RatingRequest(userId,movieId,rating)));
+    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "1") float rating) {
+        System.out.println(ratingsService.rate(new RatingRequest(userId, movieId, rating)));
     }
 
     @ShellMethod(value = "Exit the shell.", key = {"quit", "exit"})

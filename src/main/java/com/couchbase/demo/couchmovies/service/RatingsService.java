@@ -1,5 +1,7 @@
 package com.couchbase.demo.couchmovies.service;
 
+import com.couchbase.client.java.ReactiveBucket;
+import com.couchbase.client.java.ReactiveCollection;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.demo.couchmovies.api.dto.RatingRequest;
@@ -24,18 +26,24 @@ public class RatingsService {
     @Autowired
     private SDKAsyncRepo sdkAsyncRepo;
 
+    private ReactiveCollection collection;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public RatingsService(@Autowired ReactiveBucket bucket) {
+        collection = bucket.collection("ratings");
+    }
 
     @Async
     public void load(int limit) {
-        loader.load(ratingParser, this.getClass().getName(), limit);
+        loader.load(collection, ratingParser, this.getClass().getName(), limit);
     }
 
     public String rate(RatingRequest ratingRequest) {
 
         JsonObject request = ratingParser.ratingToJson(ratingRequest);
-        Long cas = sdkAsyncRepo.upsert(request).block().cas();
-        GetResult result = sdkAsyncRepo.get(request);
+        Long cas = sdkAsyncRepo.upsert(collection, request).block().cas();
+        GetResult result = sdkAsyncRepo.get(collection, request);
 
         // CAS dumb check
 

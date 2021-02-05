@@ -11,11 +11,10 @@ import static java.lang.String.format;
 @Component
 public class RatingObjectParser implements ToJsonObjectParser {
 
-    @Value("${com.couchbase.demo.couchmovies.ratingsCsv}")
-    private String ratingsCsv;
-
     private static final String RATING_KEY_MASK = "rating::%s::%s";
     private static final String RATING_TYPE = "rating";
+    @Value("${com.couchbase.demo.couchmovies.ratingsCsv}")
+    private String ratingsCsv;
 
     @Override
     public Flux<JsonObject> parse(int limit) {

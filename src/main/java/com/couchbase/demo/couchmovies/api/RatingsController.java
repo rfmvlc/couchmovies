@@ -4,7 +4,9 @@ import com.couchbase.demo.couchmovies.api.dto.RatingRequest;
 import com.couchbase.demo.couchmovies.service.RatingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
