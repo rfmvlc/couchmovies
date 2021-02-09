@@ -101,6 +101,7 @@ Admin Commands
         load-movies: Load movies
         load-ratings: Load ratings
         rate: rate a movie
+        search-movie: search for a movie
 ```
 
 ## help over command
@@ -133,6 +134,15 @@ OPTIONS
 ```
 shell:>rate 1 1 4.5
 {"rating":4.5,"movieId":1,"type":"rating","userId":1,"key":"rating::1::1","timestamp":1581551670623}
+```
+
+## Search for a movie
+```
+shell:>search-movie teddy
+
+Teddy Bear (Mis) (1981)
+Teddy Bears' Picnic (2001)
+Homer & Eddie (1989)
 ```
 
 ## have an error? don't sweat *stacktrace* will help you out!
