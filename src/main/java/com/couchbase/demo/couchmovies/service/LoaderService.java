@@ -19,13 +19,13 @@ public class LoaderService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Async
-    public void load(ReactiveCollection collection, ToJsonObjectParser parser, String task, int limit) {
+    public void load(ReactiveCollection collection, CsvToJsonObjectParser parser, String task, int limit, boolean random) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, task + "-load");
 
         sdkAsyncRepo
                 .batchUpsert(collection,
-                        parser.parse(limit)
+                        parser.parse(limit, random)
                 )
                 .doOnNext(fluxTracer::onNext)
                 .doOnError(fluxTracer::onError)

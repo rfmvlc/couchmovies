@@ -45,10 +45,5 @@ public class CouchbaseConfig {
     public ReactiveBucket bucket(ReactiveCluster cluster) {
         return cluster.bucket(bucketName);
     }
-    /*
-    @Bean
-    public ReactiveCollection collection(ReactiveBucket bucket) {
-        return bucket.defaultCollection();
-    }
-    */
+
 }

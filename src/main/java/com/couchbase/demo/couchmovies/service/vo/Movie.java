@@ -10,7 +10,7 @@ public class Movie {
     public static final String MOVIE_KEY_MASK = "movie::%s";
     public List<String> genres;
     private String _key, title, type;
-    private Number year, movieId;
+    private Number movieId;
 
 
     private Movie() {
@@ -51,14 +51,6 @@ public class Movie {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Number getYear() {
-        return year;
-    }
-
-    public void setYear(Number year) {
-        this.year = year;
     }
 
     public Number getMovieId() {

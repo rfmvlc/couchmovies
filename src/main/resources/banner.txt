@@ -5,4 +5,3 @@ ${Ansi.RED} / /  / _ \| | | |/ __| '_ \ /    \ / _ \ \ / / |/ _ \/ __|
 ${Ansi.RED}/ /__| (_) | |_| | (__| | | / /\/\ \ (_) \ V /| |  __/\__ \
 ${Ansi.RED}\____/\___/ \__,_|\___|_| |_\/    \/\___/ \_/ |_|\___||___/
 
-${Ansi.GREEN} :: Sample application build with Spring Boot${spring-boot.formatted-version} ::${Ansi.DEFAULT}

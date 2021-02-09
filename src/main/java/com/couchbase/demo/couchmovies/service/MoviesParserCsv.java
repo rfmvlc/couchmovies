@@ -9,7 +9,7 @@ import reactor.core.publisher.Flux;
 import java.util.Arrays;
 
 @Component
-public class MoviesParser implements ToJsonObjectParser {
+public class MoviesParserCsv implements CsvToJsonObjectParser {
 
     @Value("${com.couchbase.demo.couchmovies.moviesCsv}")
     private String moviesCsv;
@@ -26,8 +26,7 @@ public class MoviesParser implements ToJsonObjectParser {
         return movie;
     }
 
-    @Override
-    public Flux<JsonObject> parse(int limit) {
+    public Flux<JsonObject> parse(int limit, boolean random) {
         return fromCsvFile(limit).flatMap(m -> {
             Movie movie = new Movie(Long.valueOf(m[0]));
             movie.setTitle(m[1].replace("\"", ""));

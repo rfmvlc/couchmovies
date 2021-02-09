@@ -13,17 +13,17 @@ public class MoviesService {
     LoaderService loader;
 
     @Autowired
-    MoviesParser movieParser;
+    MoviesParserCsv movieParser;
 
     private ReactiveCollection collection;
 
     public MoviesService(@Autowired ReactiveBucket bucket) {
-        collection = bucket.collection("movies");
+        collection = bucket.scope("catalog").collection("movies");
     }
 
     @Async
     public void load(int limit) {
-        loader.load(collection, movieParser, this.getClass().getName(), limit);
+        loader.load(collection, movieParser, this.getClass().getName(), limit, false);
     }
 
 }

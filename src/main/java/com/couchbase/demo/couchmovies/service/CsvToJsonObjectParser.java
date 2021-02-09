@@ -7,9 +7,9 @@ import reactor.core.publisher.Flux;
 import java.io.FileReader;
 
 
-public interface ToJsonObjectParser {
+public interface CsvToJsonObjectParser {
 
-    Flux<JsonObject> parse(int limit);
+    Flux<JsonObject> parse(int limit, boolean random);
 
     default Flux<String[]> fromCsvFile(int limit) {
         try {
