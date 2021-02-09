@@ -42,6 +42,9 @@ public class AdminCommands implements Quit.Command {
         System.out.println(ratingsService.rate(new RatingRequest(userId, movieId, rating)));
     }
 
+    @ShellMethod("Search for a movie")
+    public void searchMovie(@ShellOption String searchString) { moviesService.search(searchString); }
+
     @ShellMethod(value = "Exit the shell.", key = {"quit", "exit"})
     public void quit() {
         System.exit(0); //HACK!
