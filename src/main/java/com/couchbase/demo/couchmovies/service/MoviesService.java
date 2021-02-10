@@ -71,8 +71,10 @@ public class MoviesService {
         table.render();
     }
 
-    public void showTopMovies(int numMovies) {
-        Iterable<JsonObject> topMovies = cluster.query(topMoviesQuery, QueryOptions.queryOptions().parameters(JsonObject.create().put("numMovies", numMovies))).flatMapMany(ReactiveQueryResult::rowsAsObject).toIterable();
+    public void showTopMovies(int numMovies, int userLimit) {
+        JsonObject queryParameters = JsonObject.create().put("numMovies", numMovies).put("userLimit", userLimit);
+        QueryOptions queryOptions = QueryOptions.queryOptions().parameters(queryParameters);
+        Iterable<JsonObject> topMovies = cluster.query(topMoviesQuery, queryOptions).flatMapMany(ReactiveQueryResult::rowsAsObject).toIterable();
 
         AsciiTable table = new AsciiTable();
         table.setMaxColumnWidth(50);

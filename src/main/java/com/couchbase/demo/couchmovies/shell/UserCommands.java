@@ -30,8 +30,8 @@ public class UserCommands {
     }
 
     @ShellMethod("Analyse top movies")
-    public void topMovies(@ShellOption(defaultValue = "10") int numMovies) {
-        moviesService.showTopMovies(numMovies);
+    public void topMovies(@ShellOption(defaultValue = "10") int numMovies, @ShellOption(defaultValue = "250") int userLimit) {
+        moviesService.showTopMovies(numMovies, userLimit);
     }
 
 }
