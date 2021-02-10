@@ -29,5 +29,9 @@ public class UserCommands {
         moviesService.search(searchString);
     }
 
+    @ShellMethod("Analyse top movies")
+    public void topMovies(@ShellOption(defaultValue = "10") int numMovies) {
+        moviesService.showTopMovies(numMovies);
+    }
 
 }
