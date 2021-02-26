@@ -30,7 +30,7 @@ public class RatingsService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public RatingsService(@Autowired ReactiveBucket bucket) {
-        collection = bucket.scope("users").collection("ratings");
+        collection = bucket.defaultCollection();
     }
 
     @Async

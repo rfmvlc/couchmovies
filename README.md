@@ -33,7 +33,7 @@ Adjust to your environment settings:
 ```
 # Cluster nodes
 ## List of nodes comma separated
-com.couchbase.demo.couchmovies.connection-string=couchbase://*****
+com.couchbase.demo.couchmovies.connection-string=*****
 # Bucket + Credentials
 com.couchbase.demo.couchmovies.bucket-name=*****
 com.couchbase.demo.couchmovies.username=*****

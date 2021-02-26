@@ -38,7 +38,7 @@ public class MoviesService {
                          @Autowired LoaderService loader,
                          @Autowired MoviesParserCsv movieParser) {
         this.cluster = cluster;
-        this.collection = bucket.scope("catalog").collection("movies");
+        this.collection = bucket.defaultCollection();
         this.loader = loader;
         this.movieParser = movieParser;
     }
