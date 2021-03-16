@@ -1,7 +1,7 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.java.ReactiveCollection;
-import com.couchbase.demo.couchmovies.data.SDKAsyncRepo;
+import com.couchbase.demo.couchmovies.data.SDKRepository;
 import com.couchbase.demo.couchmovies.util.FluxTracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,18 +14,18 @@ public class LoaderService {
 
 
     @Autowired
-    private SDKAsyncRepo sdkAsyncRepo;
+    private SDKRepository sdkRepository;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Async
-    public void load(ReactiveCollection collection, CsvToJsonObjectParser parser, String task, int limit, boolean random) {
+    public void load(ReactiveCollection collection, CsvToJsonObjectParser parser, String task, long limit, long skip, boolean random) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, task + "-load");
 
-        sdkAsyncRepo
+        sdkRepository
                 .batchUpsert(collection,
-                        parser.parse(limit, random)
+                        parser.parseFromCsvFile(limit, skip, random)
                 )
                 .doOnNext(fluxTracer::onNext)
                 .doOnError(fluxTracer::onError)

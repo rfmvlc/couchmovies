@@ -9,25 +9,13 @@ import reactor.core.publisher.Flux;
 import java.util.Arrays;
 
 @Component
-public class MoviesParserCsv implements CsvToJsonObjectParser {
+public class MoviesParser implements CsvToJsonObjectParser, MovieToJsonObjectParser {
 
     @Value("${com.couchbase.demo.couchmovies.moviesCsv}")
     private String moviesCsv;
 
-    JsonObject movieToJson(Movie m) {
-
-        JsonObject movie = JsonObject.create();
-        movie.put("movieId", m.getMovieId());
-        movie.put("type", m.getType());
-        movie.put("title", m.getTitle());
-        movie.put("genres", m.getGenres());
-        movie.put("key", m.getKey());
-
-        return movie;
-    }
-
-    public Flux<JsonObject> parse(int limit, boolean random) {
-        return fromCsvFile(limit).flatMap(m -> {
+    public Flux<JsonObject> parseFromCsvFile(long limit, long skip, boolean random) {
+        return fromCsvFile(limit, skip).flatMap(m -> {
             Movie movie = new Movie(Long.valueOf(m[0]));
             movie.setTitle(m[1].replace("\"", ""));
             movie.setGenres(Arrays.asList(m[2].split("\\|")));

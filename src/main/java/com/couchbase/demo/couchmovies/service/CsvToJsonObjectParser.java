@@ -9,9 +9,9 @@ import java.io.FileReader;
 
 public interface CsvToJsonObjectParser {
 
-    Flux<JsonObject> parse(int limit, boolean random);
+    Flux<JsonObject> parseFromCsvFile(long limit, long skip, boolean random);
 
-    default Flux<String[]> fromCsvFile(int limit) {
+    default Flux<String[]> fromCsvFile(long limit, long skip) {
         try {
 
             Flux<String[]> result;
@@ -19,9 +19,9 @@ public interface CsvToJsonObjectParser {
             CSVReader reader = new CSVReader(new FileReader(getPath()));
 
             if (limit > 0)
-                result = Flux.fromIterable(reader).skip(1).limitRequest(limit);
+                result = Flux.fromIterable(reader).skip(1 + skip).limitRequest(limit);
             else
-                result = Flux.fromIterable(reader).skip(1);
+                result = Flux.fromIterable(reader).skip(1 + skip);
 
             return result;
 

@@ -1,9 +1,10 @@
 package com.couchbase.demo.couchmovies.service;
 
-import com.couchbase.client.java.ReactiveBucket;
-import com.couchbase.client.java.ReactiveCollection;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.demo.couchmovies.data.SDKAsyncRepo;
+import com.couchbase.demo.couchmovies.data.SDKRepository;
+import com.couchbase.demo.couchmovies.service.vo.Rating;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,28 +21,32 @@ public class RatingsService {
     LoaderService loader;
 
     @Autowired
-    RatingsParserCsv ratingParser;
+    RatingsParser ratingParser;
 
     @Autowired
-    private SDKAsyncRepo sdkAsyncRepo;
+    private SDKRepository sdkRepository;
 
-    private ReactiveCollection collection;
+    private Collection collection;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public RatingsService(@Autowired ReactiveBucket bucket) {
+    public RatingsService(@Autowired Bucket bucket) {
         collection = bucket.defaultCollection();
     }
 
     @Async
-    public void load(int limit, boolean random) {
-        loader.load(collection, ratingParser, this.getClass().getName(), limit, random);
+    public void load(long limit, long skip, boolean random) {
+        loader.load(collection.reactive(), ratingParser, this.getClass().getName(), limit, skip, random);
     }
 
+    public void rate(long userId, long movieId, int rating) {
+        Rating r = new Rating(userId, movieId, rating);
+        sdkRepository.upsert(collection, ratingParser.ratingToJson(r, false));
+    }
 
     public void myRatings(long userId) {
 
-        Iterable<JsonObject> results  = sdkAsyncRepo.myRatings(userId);
+        Iterable<JsonObject> results  = sdkRepository.myRatings(userId);
 
         AsciiTable table = new AsciiTable();
         table.setMaxColumnWidth(50);

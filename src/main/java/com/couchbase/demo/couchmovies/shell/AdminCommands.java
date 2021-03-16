@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import org.springframework.shell.standard.commands.Quit;
 
 @Lazy
 @ShellComponent
@@ -20,13 +19,13 @@ public class AdminCommands {
     RatingsService ratingsService;
 
     @ShellMethod(value = "Load movies")
-    public void loadMovies(@ShellOption(defaultValue = "0") int limit) {
-        moviesService.load(limit);
+    public void loadMovies(@ShellOption(defaultValue = "0") long limit, @ShellOption(defaultValue = "0") long skip) {
+        moviesService.load(limit, skip);
     }
 
     @ShellMethod(value = "Load ratings")
-    public void loadRatings(@ShellOption(defaultValue = "0") int limit, @ShellOption(defaultValue = "false") boolean randomRatings) {
-        ratingsService.load(limit, randomRatings);
+    public void loadRatings(@ShellOption(defaultValue = "0") int limit, @ShellOption(defaultValue = "0") long skip, @ShellOption(defaultValue = "false") boolean randomRatings) {
+        ratingsService.load(limit, skip, randomRatings);
     }
 
 }

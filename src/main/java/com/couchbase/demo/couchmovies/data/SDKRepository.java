@@ -1,6 +1,7 @@
 package com.couchbase.demo.couchmovies.data;
 
-import com.couchbase.client.java.ReactiveCluster;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.ReactiveCollection;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.GetResult;
@@ -16,18 +17,27 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
 @Repository
-public class SDKAsyncRepo {
+public class SDKRepository {
 
     @Autowired
-    ReactiveCluster cluster;
+    Cluster cluster;
 
     @Value("${com.couchbase.demo.couchmovies.my-ratings-query}")
     private String myRatingsQuery;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public GetResult get(ReactiveCollection collection, JsonObject o) {
-        return collection.get(o.getString("key")).block();
+    public GetResult get(Collection collection, JsonObject o) {
+        return collection.get(o.getString("key"));
+    }
+
+    public MutationResult upsert(Collection collection, JsonObject o) {
+        MutationResult upsertResult = collection.upsert(
+                o.getString("key"),
+                o
+        );
+
+        return upsertResult;
     }
 
     public Flux<MutationResult> batchUpsert(ReactiveCollection collection, Flux<JsonObject> o) {
@@ -35,14 +45,14 @@ public class SDKAsyncRepo {
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
 
         return o.flatMap(
-                d -> collection.upsert(d.getString("key"), d)
+                d -> collection.upsert(d.getString("id"), d)
         ).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete);
 
     }
 
     public Iterable<JsonObject> myRatings(long userId) {
 
-       return cluster.query(myRatingsQuery, QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", userId))).flatMapMany(ReactiveQueryResult::rowsAsObject).toIterable();
+        return cluster.reactive().query(myRatingsQuery, QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", userId))).flatMapMany(ReactiveQueryResult::rowsAsObject).toIterable();
 
     }
 }

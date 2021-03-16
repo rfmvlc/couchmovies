@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import org.springframework.shell.standard.commands.Quit;
 
 @Lazy
 @ShellComponent
@@ -20,6 +19,11 @@ public class UserCommands {
     MoviesService moviesService;
 
     @ShellMethod(value = "list my last ratings")
+    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "3") int rating) {
+        ratingsService.rate(userId, movieId, rating);
+    }
+
+    @ShellMethod(value = "list my last ratings")
     public void myRatings(@ShellOption(defaultValue = "1") long userId) {
         ratingsService.myRatings(userId);
     }
@@ -30,8 +34,8 @@ public class UserCommands {
     }
 
     @ShellMethod("Analyse top movies")
-    public void topMovies(@ShellOption(defaultValue = "10") int numMovies, @ShellOption(defaultValue = "250") int userLimit) {
-        moviesService.showTopMovies(numMovies, userLimit);
+    public void top10Movies() {
+        moviesService.showTopMovies(10);
     }
 
 }

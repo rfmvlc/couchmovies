@@ -5,9 +5,11 @@
 - Maven 3.x
 
 > Setup your environment as described on Java SDK docs [here](https://docs.couchbase.com/java-sdk/current/hello-world/start-using-sdk.html)
+
 # Dataset
 
 ## Download zip file
+
 ```
 $ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.zip
 ```
@@ -15,21 +17,23 @@ $ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.
 ## Extract the zip file and copy content to movie's folder
 
 > Example
+
 ```
 $  unzip -j "movies.zip" -d ~/movies
 ``` 
 
-# Create movies bucket and collections 
+# Create movies bucket and collections
 
 > Create "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
 
-> Create "movies" and "ratings" collections as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/developer-preview/collections/manage-collections-with-rest.html) 
+> Create "movies" and "ratings" collections as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/developer-preview/collections/manage-collections-with-rest.html)
 
 # Configure settings
- 
- > File: `resources/application.properties`
 
-Adjust to your environment settings: 
+> File: `resources/application.properties`
+
+Adjust to your environment settings:
+
 ```
 # Cluster nodes
 ## List of nodes comma separated
@@ -89,7 +93,7 @@ $ mvn spring-boot:run
  shell:>
 ```
 
-# Commands 
+# Commands
 
 ## help
 
@@ -130,12 +134,14 @@ OPTIONS
 ```
 
 ## rate a movie
+
 ```
 shell:>rate 1 1 4.5
 {"rating":4.5,"movieId":1,"type":"rating","userId":1,"key":"rating::1::1","timestamp":1581551670623}
 ```
 
 ## have an error? don't sweat *stacktrace* will help you out!
+
 ```
 shell:>rate maverick iceman loren ipsum
 Too many arguments: the following could not be mapped to parameters: 'ipsum'
