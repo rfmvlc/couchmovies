@@ -81,9 +81,9 @@ CONNECT LINK Local;
 
 ## FTS
 
-Create FTS index following this confiiguration:
+Create FTS index (couchmovies-title-index) using as type following this confiiguration:
+![Captura de pantalla 2021-03-17 a las 5 43 02](https://user-images.githubusercontent.com/12693935/111416206-c4a86300-86e3-11eb-9bc0-832e3dc39b07.png)
 
-![ftsindex](https://user-images.githubusercontent.com/12693935/111414738-c6bcf280-86e0-11eb-8277-75e790e99c9c.png)
 
 
 # Run the application
