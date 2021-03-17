@@ -2,6 +2,10 @@
 # Pre-requisites
 
 - Couchbase Server 6.6 (default collection enabled)
+- - Data service
+- - Query service
+- - Index service
+- - Analytics service
 - Java 1.8.x
 - Maven 3.x
 - Spring Data 4.x
@@ -82,8 +86,8 @@ CONNECT LINK Local;
 ## FTS
 
 Create FTS index (couchmovies-title-index) using as type following this confiiguration:
-![Captura de pantalla 2021-03-17 a las 5 43 02](https://user-images.githubusercontent.com/12693935/111416206-c4a86300-86e3-11eb-9bc0-832e3dc39b07.png)
 
+![Captura de pantalla 2021-03-17 a las 5 48 02](https://user-images.githubusercontent.com/12693935/111416488-59ab5c00-86e4-11eb-8cff-96a93cac1310.png)
 
 
 # Run the application
