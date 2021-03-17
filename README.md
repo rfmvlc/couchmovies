@@ -3,6 +3,7 @@
 - Couchbase Server 6.6 (default collection enabled)
 - Java 1.8.x
 - Maven 3.x
+- Spring Data 4.x
 
 > Setup your environment as described on Java SDK docs [here](https://docs.couchbase.com/java-sdk/current/hello-world/start-using-sdk.html)
 
