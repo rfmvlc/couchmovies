@@ -1,52 +1,91 @@
 package com.couchbase.demo.couchmovies.service;
 
-import com.couchbase.client.java.Bucket;
+import com.couchbase.client.core.error.subdoc.PathExistsException;
+import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.demo.couchmovies.data.SDKRepository;
+import com.couchbase.client.java.kv.MutateInSpec;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.query.ReactiveQueryResult;
+import com.couchbase.demo.couchmovies.data.RatingsRepository;
+import com.couchbase.demo.couchmovies.data.ReactiveRatingsRepository;
 import com.couchbase.demo.couchmovies.service.vo.Rating;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
+import com.couchbase.demo.couchmovies.util.FluxTracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Service
 @Validated
 public class RatingsService {
 
     @Autowired
-    LoaderService loader;
-
-    @Autowired
     RatingsParser ratingParser;
 
     @Autowired
-    private SDKRepository sdkRepository;
+    private RatingsRepository ratingsRepository;
 
-    private Collection collection;
+    @Autowired
+    private ReactiveRatingsRepository reactiveRatingsRepository;
+
+    @Value("${com.couchbase.demo.couchmovies.my-ratings-query}")
+    private String myRatingsQuery;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public RatingsService(@Autowired Bucket bucket) {
-        collection = bucket.defaultCollection();
+    @Autowired
+    Cluster cluster;
+
+    @Autowired
+    Collection collection;
+
+    public RatingsService() {
     }
 
     @Async
-    public void load(long limit, long skip, boolean random) {
-        loader.load(collection.reactive(), ratingParser, this.getClass().getName(), limit, skip, random);
+    public void load(long limit) {
+        FluxTracer fluxTracer = new FluxTracer(logger, "load");
+        reactiveRatingsRepository.saveAll(ratingParser.parseFromCsvFile(limit)).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
     }
 
-    public void rate(long userId, long movieId, int rating) {
+    public void rate(long userId, long movieId, float rating) {
         Rating r = new Rating(userId, movieId, rating);
-        sdkRepository.upsert(collection, ratingParser.ratingToJson(r, false));
+        ratingsRepository.save(r);
     }
 
-    public void myRatings(long userId) {
+    public void rateSubDoc(long userId, long movieId, float rating, boolean fail) {
 
-        Iterable<JsonObject> results  = sdkRepository.myRatings(userId);
+        Rating r = new Rating(userId, movieId, rating);
+        r.setTimestamp(System.currentTimeMillis());
+
+        if (!fail) {
+            collection.mutateIn(r.getId(), Arrays.asList(
+                    MutateInSpec.upsert("rating", r.getRating()),
+                    MutateInSpec.upsert("timestamp", r.getTimestamp())
+            ));
+        } else {
+            try {
+                collection.mutateIn(r.getId(), Collections.singletonList(
+                        MutateInSpec.insert("rating", r.getRating())
+                ));
+            } catch (PathExistsException err) {
+                System.out.println("insertFunc: exception caught, path already exists");
+            }
+        }
+
+    }
+
+    public void findMyRatings(long userId) {
+
+        Iterable<JsonObject> results = cluster.reactive().query(myRatingsQuery, QueryOptions.queryOptions().parameters(JsonObject.create().put("userId", userId))).flatMapMany(ReactiveQueryResult::rowsAsObject).toIterable();
 
         AsciiTable table = new AsciiTable();
         table.setMaxColumnWidth(50);

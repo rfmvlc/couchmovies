@@ -1,9 +1,5 @@
 package com.couchbase.demo.couchmovies.service.vo;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
-
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
@@ -16,7 +12,7 @@ public class Rating {
     private static final String RATING_TYPE =  "com.couchbase.demo.couchmovies.service.vo.Rating";
     private @Min(1) long userId;
     private @Min(1) long movieId;
-    private @Min(1) long millis;
+    private @Min(1) long timestamp;
     private String id;
     private String type;
     private @DecimalMin("0.5") @DecimalMax("5.0") float rating;
@@ -25,12 +21,12 @@ public class Rating {
         setType(RATING_TYPE);
     }
 
-    public Rating(long userId, long movieId, float rating, long millis) {
+    public Rating(long userId, long movieId, float rating, long timestamp) {
         this();
         setMovieId(movieId);
         setUserId(userId);
         setRating(rating);
-        setMillis(millis);
+        setTimestamp(timestamp);
         this.id = format(RATING_KEY_MASK, getMovieId(), getUserId());
     }
 
@@ -62,12 +58,12 @@ public class Rating {
         this.rating = rating;
     }
 
-    public long getMillis() {
-        return millis;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setMillis(long millis) {
-        this.millis = millis;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getType() {

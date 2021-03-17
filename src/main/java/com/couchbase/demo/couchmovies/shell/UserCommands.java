@@ -18,14 +18,24 @@ public class UserCommands {
     @Autowired
     MoviesService moviesService;
 
-    @ShellMethod(value = "list my last ratings")
-    public void rate(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "3") int rating) {
-        ratingsService.rate(userId, movieId, rating);
+    @ShellMethod(value = "Rate a movie")
+    public void rateMovie(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "3") float rating, boolean fail, boolean subDoc) {
+        if (!subDoc)
+            ratingsService.rate(userId, movieId, rating);
+        else
+            ratingsService.rateSubDoc(userId, movieId, rating, fail);
+
     }
 
     @ShellMethod(value = "list my last ratings")
-    public void myRatings(@ShellOption(defaultValue = "1") long userId) {
-        ratingsService.myRatings(userId);
+    public void findMyRatings(@ShellOption(defaultValue = "1") long userId) {
+        ratingsService.findMyRatings(userId);
+    }
+
+    @ShellMethod(value = "list my last ratings")
+    public void findAllMovies(@ShellOption(defaultValue = "0") int page, @ShellOption(defaultValue = "10") int pageSize, @ShellOption(defaultValue = "0") long movieId) {
+
+        moviesService.findAll(page, pageSize, movieId);
     }
 
     @ShellMethod("Search for a movie")
@@ -34,8 +44,8 @@ public class UserCommands {
     }
 
     @ShellMethod("Analyse top movies")
-    public void top10Movies() {
-        moviesService.showTopMovies(10);
+    public void findTopTenMovies() {
+        moviesService.findTopTenMovies(10);
     }
 
 }

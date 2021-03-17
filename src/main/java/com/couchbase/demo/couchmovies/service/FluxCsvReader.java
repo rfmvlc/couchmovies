@@ -1,17 +1,14 @@
 package com.couchbase.demo.couchmovies.service;
 
-import com.couchbase.client.java.json.JsonObject;
 import com.opencsv.CSVReader;
 import reactor.core.publisher.Flux;
 
 import java.io.FileReader;
 
 
-public interface CsvToJsonObjectParser {
+public interface FluxCsvReader {
 
-    Flux<JsonObject> parseFromCsvFile(long limit, long skip, boolean random);
-
-    default Flux<String[]> fromCsvFile(long limit, long skip) {
+    default Flux<String[]> fromCsvFile(long limit) {
         try {
 
             Flux<String[]> result;
@@ -19,9 +16,9 @@ public interface CsvToJsonObjectParser {
             CSVReader reader = new CSVReader(new FileReader(getPath()));
 
             if (limit > 0)
-                result = Flux.fromIterable(reader).skip(1 + skip).limitRequest(limit);
+                result = Flux.fromIterable(reader).limitRequest(limit);
             else
-                result = Flux.fromIterable(reader).skip(1 + skip);
+                result = Flux.fromIterable(reader);
 
             return result;
 

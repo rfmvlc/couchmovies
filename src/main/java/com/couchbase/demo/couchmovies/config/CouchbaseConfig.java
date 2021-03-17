@@ -5,13 +5,16 @@ import com.couchbase.client.core.env.PasswordAuthenticator;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
+import com.couchbase.client.java.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
+import org.springframework.data.couchbase.repository.config.EnableReactiveCouchbaseRepositories;
 
 
 @Configuration
+@EnableReactiveCouchbaseRepositories
 public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
 
@@ -51,6 +54,10 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
     @Bean
     public Bucket bucket(Cluster cluster) {
         return cluster().bucket(bucketName);
+    }
+    @Bean
+    public Collection collection(Bucket bucket) {
+        return bucket.defaultCollection();
     }
 
     @Override

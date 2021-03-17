@@ -19,13 +19,13 @@ public class AdminCommands {
     RatingsService ratingsService;
 
     @ShellMethod(value = "Load movies")
-    public void loadMovies(@ShellOption(defaultValue = "0") long limit, @ShellOption(defaultValue = "0") long skip) {
-        moviesService.load(limit, skip);
+    public void loadMovies(@ShellOption(defaultValue = "0") long limit) {
+        moviesService.load(limit);
     }
 
     @ShellMethod(value = "Load ratings")
-    public void loadRatings(@ShellOption(defaultValue = "0") int limit, @ShellOption(defaultValue = "0") long skip, @ShellOption(defaultValue = "false") boolean randomRatings) {
-        ratingsService.load(limit, skip, randomRatings);
+    public void loadRatings(@ShellOption(defaultValue = "0") int limit) {
+        ratingsService.load(limit);
     }
 
 }

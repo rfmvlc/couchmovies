@@ -7,19 +7,25 @@ import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.analytics.AnalyticsOptions;
 import com.couchbase.client.java.analytics.AnalyticsResult;
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.client.java.query.QueryOptions;
-import com.couchbase.client.java.query.QueryResult;
 import com.couchbase.client.java.search.SearchOptions;
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
 import com.couchbase.client.java.search.result.ReactiveSearchResult;
 import com.couchbase.client.java.search.result.SearchRow;
+import com.couchbase.demo.couchmovies.data.MoviesRepository;
+import com.couchbase.demo.couchmovies.data.ReactiveMoviesRepository;
+import com.couchbase.demo.couchmovies.service.vo.Movie;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
+import com.couchbase.demo.couchmovies.util.FluxTracer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.couchbase.core.query.AnalyticsQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class MoviesService {
@@ -27,28 +33,58 @@ public class MoviesService {
     public static final String MOVIES_FTS_INDEX = "couchmovies-title-index";
     public static final String MOVIES_TITLE_FIELD = "title";
     public static final String MOVIE_KEY_PREFIX = "movie::";
-
     private final Cluster cluster;
     private final Collection collection;
-    private final LoaderService loader;
     private final MoviesParser movieParser;
 
     @Value("${com.couchbase.demo.couchmovies.top-movies-query}")
     private String topMoviesQuery;
 
+    @Autowired
+    private ReactiveMoviesRepository reactiveMoviesRepository;
+
+    @Autowired
+    private MoviesRepository moviesRepository;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public MoviesService(@Autowired Cluster cluster,
                          @Autowired Bucket bucket,
-                         @Autowired LoaderService loader,
                          @Autowired MoviesParser movieParser) {
         this.cluster = cluster;
         this.collection = bucket.defaultCollection();
-        this.loader = loader;
         this.movieParser = movieParser;
     }
 
     @Async
-    public void load(long limit, long skip) {
-        loader.load(collection.reactive(), movieParser, this.getClass().getName(), limit, skip, false);
+    public void load(long limit) {
+
+        FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        reactiveMoviesRepository.saveAll(movieParser.parseFromCsvFile(limit)).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+    }
+
+    public void findAll(int page, int pageSize, long movieId) {
+
+        //Page<Movie> movies = moviesRepository.findAll(PageRequest.of(page, pageSize));
+
+        Page<Movie> movies = moviesRepository.findAllByMovieIdGreaterThan(movieId, PageRequest.of(page, pageSize));
+
+        AsciiTable table = new AsciiTable();
+        table.setMaxColumnWidth(50);
+        table.getColumns().add(new AsciiTable.Column("movieId"));
+        table.getColumns().add(new AsciiTable.Column("title"));
+
+        for (Movie m : movies) {
+
+            AsciiTable.Row row = new AsciiTable.Row();
+            table.getData().add(row);
+            row.getValues().add(String.valueOf(m.getMovieId()));
+            row.getValues().add(m.getTitle());
+        }
+
+        table.calculateColumnWidth();
+        table.render();
+
     }
 
     public void search(String words) {
@@ -74,10 +110,10 @@ public class MoviesService {
         table.render();
     }
 
-    public void showTopMovies(int numMovies) {
+    public void findTopTenMovies(int numMovies) {
         JsonObject queryParameters = JsonObject.create().put("numMovies", numMovies);
         AnalyticsOptions queryOptions = AnalyticsOptions.analyticsOptions().parameters(queryParameters);
-        AnalyticsResult topMovies = cluster.analyticsQuery(topMoviesQuery,queryOptions);
+        AnalyticsResult topMovies = cluster.analyticsQuery(topMoviesQuery, queryOptions);
 
         AsciiTable table = new AsciiTable();
         table.setMaxColumnWidth(50);
