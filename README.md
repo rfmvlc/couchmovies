@@ -2,10 +2,10 @@
 # Pre-requisites
 
 - Couchbase Server 6.6 (default collection enabled)
-- - Data service
-- - Query service
-- - Index service
-- - Analytics service
+	- Data service
+	- Query service
+	- Index service
+	- Analytics service
 - Java 1.8.x
 - Maven 3.x
 - Spring Data 4.x
