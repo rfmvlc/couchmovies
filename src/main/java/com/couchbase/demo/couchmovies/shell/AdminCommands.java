@@ -27,8 +27,12 @@ public class AdminCommands {
     }
 
     @ShellMethod(value = "Load ratings")
-    public void loadRatings(@ShellOption(defaultValue = "0") int limit) {
-        ratingsService.load(limit);
+    public void loadRatings(@ShellOption(defaultValue = "0") int limit, boolean sdk) {
+
+        if (!sdk)
+            ratingsService.load(limit);
+        else
+            ratingsService.loadSDK(limit);
     }
 
 }

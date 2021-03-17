@@ -50,7 +50,7 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
                 .build();
 
         Cluster cluster = Cluster.connect(connectionString, ClusterOptions.clusterOptions(authenticator));
-        cluster.waitUntilReady(Duration.ofSeconds(1));
+        cluster.waitUntilReady(Duration.ofSeconds(5));
         return cluster;
         //.environment(env)
     }
@@ -58,7 +58,7 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
     @Bean
     public Bucket bucket(Cluster cluster) {
         Bucket bucket = cluster().bucket(bucketName);
-        bucket.waitUntilReady(Duration.ofSeconds(1));
+        bucket.waitUntilReady(Duration.ofSeconds(5));
         return bucket;
     }
     @Bean

@@ -1,13 +1,13 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
+import com.couchbase.client.core.msg.kv.DurabilityLevel;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.analytics.AnalyticsOptions;
 import com.couchbase.client.java.analytics.AnalyticsResult;
 import com.couchbase.client.java.json.JsonObject;
-import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.search.SearchOptions;
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
@@ -27,7 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.Locale;
+import static com.couchbase.client.java.kv.UpsertOptions.upsertOptions;
 
 
 @Service
@@ -63,15 +63,17 @@ public class MoviesService {
     public void load(long limit) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
-        reactiveMoviesRepository.saveAll(movieParser.parseFromCsvFile(limit)).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+        reactiveMoviesRepository.saveAll(movieParser.parseFromCsvFile(limit))
+                .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
     }
 
     @Async
     public void loadSDK(long limit) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
-        movieParser.parseFromCsvFile(limit).
-                flatMap(movie -> collection.reactive().upsert(movie.getId(), movie))
+        movieParser.parseFromCsvFile(limit)
+                //.flatMap(movie -> collection.reactive().upsert(movie.getId(), movie, upsertOptions().durability(DurabilityLevel.MAJORITY)))
+                .flatMap(movie -> collection.reactive().upsert(movie.getId(), movie))
                 .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
     }
 

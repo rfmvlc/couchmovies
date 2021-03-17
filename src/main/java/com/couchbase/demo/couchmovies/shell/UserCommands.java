@@ -36,13 +36,12 @@ public class UserCommands {
 
     }
 
-
     @ShellMethod(value = "list my last ratings")
     public void findMyRatings(@ShellOption(defaultValue = "1") long userId) {
         ratingsService.findMyRatings(userId);
     }
 
-    @ShellMethod(value = "list my last ratings")
+    @ShellMethod(value = "Find movies paginated and sorted")
     public void findAllMovies(@ShellOption(defaultValue = "0") int page, @ShellOption(defaultValue = "10") int pageSize, @ShellOption(defaultValue = "0") long movieId) {
 
         moviesService.findAll(page, pageSize, movieId);

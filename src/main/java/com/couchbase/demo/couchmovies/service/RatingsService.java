@@ -1,6 +1,7 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.core.error.subdoc.PathExistsException;
+import com.couchbase.client.core.msg.kv.DurabilityLevel;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
@@ -22,6 +23,8 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import static com.couchbase.client.java.kv.UpsertOptions.upsertOptions;
 
 @Service
 @Validated
@@ -54,6 +57,16 @@ public class RatingsService {
     public void load(long limit) {
         FluxTracer fluxTracer = new FluxTracer(logger, "load");
         reactiveRatingsRepository.saveAll(ratingParser.parseFromCsvFile(limit)).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+    }
+
+    @Async
+    public void loadSDK(long limit) {
+
+        FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        ratingParser.parseFromCsvFile(limit)
+                //flatMap(rating -> collection.reactive().upsert(rating.getId(), rating, upsertOptions().durability(DurabilityLevel.MAJORITY)))
+                .flatMap(rating -> collection.reactive().upsert(rating.getId(), rating))
+                .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
     }
 
     public void rate(long userId, long movieId, float rating) {
