@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
 import org.springframework.data.couchbase.repository.config.EnableReactiveCouchbaseRepositories;
 
+import java.time.Duration;
+
 
 @Configuration
 @EnableReactiveCouchbaseRepositories
@@ -47,13 +49,17 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
                 .onlyEnablePlainSaslMechanism()
                 .build();
 
-        return Cluster.connect(connectionString, ClusterOptions.clusterOptions(authenticator));
+        Cluster cluster = Cluster.connect(connectionString, ClusterOptions.clusterOptions(authenticator));
+        cluster.waitUntilReady(Duration.ofSeconds(1));
+        return cluster;
         //.environment(env)
     }
 
     @Bean
     public Bucket bucket(Cluster cluster) {
-        return cluster().bucket(bucketName);
+        Bucket bucket = cluster().bucket(bucketName);
+        bucket.waitUntilReady(Duration.ofSeconds(1));
+        return bucket;
     }
     @Bean
     public Collection collection(Bucket bucket) {

@@ -7,6 +7,7 @@ import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.analytics.AnalyticsOptions;
 import com.couchbase.client.java.analytics.AnalyticsResult;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.GetResult;
 import com.couchbase.client.java.search.SearchOptions;
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
@@ -25,6 +26,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 
 @Service
@@ -61,6 +64,27 @@ public class MoviesService {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
         reactiveMoviesRepository.saveAll(movieParser.parseFromCsvFile(limit)).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+    }
+
+    @Async
+    public void loadSDK(long limit) {
+
+        FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        movieParser.parseFromCsvFile(limit).
+                flatMap(movie -> collection.reactive().upsert(movie.getId(), movie))
+                .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+    }
+
+    public void getMovieSDK(long movieId) {
+        Movie movie = new Movie(movieId);
+        System.out.println(collection.get(movie.getId()).toString());
+
+    }
+
+    public void getMovie(long movieId) {
+        Movie movie = new Movie(movieId);
+        System.out.println(moviesRepository.findById(movie.getId()).get().toString());
+
     }
 
     public void findAll(int page, int pageSize, long movieId) {

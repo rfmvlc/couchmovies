@@ -27,6 +27,16 @@ public class UserCommands {
 
     }
 
+    @ShellMethod(value = "Get movie info")
+    public void getMovie(@ShellOption(defaultValue = "1") long movieId, boolean sdk) {
+        if (!sdk)
+            moviesService.getMovie(movieId);
+        else
+            moviesService.getMovieSDK(movieId);
+
+    }
+
+
     @ShellMethod(value = "list my last ratings")
     public void findMyRatings(@ShellOption(defaultValue = "1") long userId) {
         ratingsService.findMyRatings(userId);

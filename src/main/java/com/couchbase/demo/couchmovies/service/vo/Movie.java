@@ -50,4 +50,12 @@ public class Movie {
     public void setMovieId(Number movieId) {
         this.movieId = movieId;
     }
+
+
+
+    @Override
+    public String toString(){
+        return org.apache.commons.lang3.builder.ReflectionToStringBuilder.toString(this);
+    }
+
 }

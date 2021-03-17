@@ -89,6 +89,7 @@ public class RatingsService {
 
         AsciiTable table = new AsciiTable();
         table.setMaxColumnWidth(50);
+        table.getColumns().add(new AsciiTable.Column("movieId"));
         table.getColumns().add(new AsciiTable.Column("title"));
         table.getColumns().add(new AsciiTable.Column("rating"));
         table.getColumns().add(new AsciiTable.Column("date"));
@@ -98,6 +99,7 @@ public class RatingsService {
 
             AsciiTable.Row row = new AsciiTable.Row();
             table.getData().add(row);
+            row.getValues().add(value.get("movieId").toString());
             row.getValues().add(value.get("title").toString());
             row.getValues().add(value.get("rating").toString());
             row.getValues().add(value.get("date").toString());

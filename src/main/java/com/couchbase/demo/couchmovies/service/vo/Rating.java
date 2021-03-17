@@ -81,4 +81,12 @@ public class Rating {
     public void setId(String id) {
         this.id = id;
     }
+
+
+
+    @Override
+    public String toString(){
+        return org.apache.commons.lang3.builder.ReflectionToStringBuilder.toString(this);
+    }
+
 }
