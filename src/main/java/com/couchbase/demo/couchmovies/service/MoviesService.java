@@ -8,6 +8,7 @@ import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.analytics.AnalyticsOptions;
 import com.couchbase.client.java.analytics.AnalyticsResult;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.search.SearchOptions;
 import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
@@ -68,12 +69,15 @@ public class MoviesService {
     }
 
     @Async
-    public void loadSDK(long limit) {
+    public void loadSDK(long limit, boolean durability) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        UpsertOptions upsertOptions = upsertOptions();
+        if(durability)
+            upsertOptions.durability(DurabilityLevel.PERSIST_TO_MAJORITY);
+
         movieParser.parseFromCsvFile(limit)
-                //.flatMap(movie -> collection.reactive().upsert(movie.getId(), movie, upsertOptions().durability(DurabilityLevel.MAJORITY)))
-                .flatMap(movie -> collection.reactive().upsert(movie.getId(), movie))
+                .flatMap(movie -> collection.reactive().upsert(movie.getId(), movie, upsertOptions))
                 .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
     }
 

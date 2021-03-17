@@ -6,6 +6,7 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.json.JsonObject;
 import com.couchbase.client.java.kv.MutateInSpec;
+import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.ReactiveQueryResult;
 import com.couchbase.demo.couchmovies.data.RatingsRepository;
@@ -60,12 +61,15 @@ public class RatingsService {
     }
 
     @Async
-    public void loadSDK(long limit) {
+    public void loadSDK(long limit, boolean durability) {
 
         FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        UpsertOptions upsertOptions = upsertOptions();
+        if(durability)
+            upsertOptions.durability(DurabilityLevel.PERSIST_TO_MAJORITY);
+
         ratingParser.parseFromCsvFile(limit)
-                //flatMap(rating -> collection.reactive().upsert(rating.getId(), rating, upsertOptions().durability(DurabilityLevel.MAJORITY)))
-                .flatMap(rating -> collection.reactive().upsert(rating.getId(), rating))
+                .flatMap(rating -> collection.reactive().upsert(rating.getId(), rating, upsertOptions))
                 .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
     }
 
