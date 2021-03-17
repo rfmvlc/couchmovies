@@ -1,11 +1,14 @@
 package com.couchbase.demo.couchmovies.config;
 
 
+import com.couchbase.client.core.env.CompressionConfig;
 import com.couchbase.client.core.env.PasswordAuthenticator;
+import com.couchbase.client.core.env.ThresholdRequestTracerConfig;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.env.ClusterEnvironment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,16 +35,8 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
     @Value("${com.couchbase.demo.couchmovies.password}")
     private String password;
 
-
-    //@Bean
-    //public ClusterEnvironment couchbaseEnvironment() {
-    //    return ClusterEnvironment.builder().compressionConfig(CompressionConfig.enable(true)).build();
-    //}
-
     @Bean
-    //public ReactiveCluster cluster(ClusterEnvironment env) {
-    public Cluster cluster() {
-
+    public Cluster couchbaseCluster() {
         PasswordAuthenticator authenticator = PasswordAuthenticator
                 .builder()
                 .username(username)
@@ -52,15 +47,16 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
         Cluster cluster = Cluster.connect(connectionString, ClusterOptions.clusterOptions(authenticator));
         cluster.waitUntilReady(Duration.ofSeconds(5));
         return cluster;
-        //.environment(env)
+
     }
 
     @Bean
     public Bucket bucket(Cluster cluster) {
-        Bucket bucket = cluster().bucket(bucketName);
+        Bucket bucket = cluster.bucket(bucketName);
         bucket.waitUntilReady(Duration.ofSeconds(5));
         return bucket;
     }
+
     @Bean
     public Collection collection(Bucket bucket) {
         return bucket.defaultCollection();
