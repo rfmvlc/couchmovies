@@ -23,7 +23,7 @@ $ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.
 $  unzip -j "movies.zip" -d ~
 ``` 
 
-# Create movies bucket and collections
+# Create movies bucket 
 
 > Create "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
 
@@ -45,6 +45,28 @@ com.couchbase.demo.couchmovies.password=******
 # Movies dataset
 com.couchbase.demo.couchmovies.home=*****
 ```
+
+# Create GSI and FTS indexes
+
+## GSI (N1QL)
+
+Create movies indexes:
+
+```sql
+CREATE INDEX `ix_movies_by_type` ON `movies`(`movieId`) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Movie");
+```
+Create ratings indexes:
+
+```sql
+CREATE INDEX `ix_ratings_by_type` ON `movies`(`userId`,`movieId`,`rating`,`timestamp` DESC) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Rating");
+```
+
+## FTS
+
+Create FTS index following this confiiguration:
+
+![ftsindex](https://user-images.githubusercontent.com/12693935/111414738-c6bcf280-86e0-11eb-8277-75e790e99c9c.png)
+
 
 # Run the application
 
