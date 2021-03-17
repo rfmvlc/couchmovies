@@ -1,6 +1,6 @@
 # Pre-requisites
 
-- Couchbase Server 7.x (collections enabled)
+- Couchbase Server 6.6 (default collection enabled)
 - Java 1.8.x
 - Maven 3.x
 
@@ -19,14 +19,13 @@ $ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.
 > Example
 
 ```
-$  unzip -j "movies.zip" -d ~/movies
+$  unzip -j "movies.zip" -d ~
 ``` 
 
 # Create movies bucket and collections
 
 > Create "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
 
-> Create "movies" and "ratings" collections as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/developer-preview/collections/manage-collections-with-rest.html)
 
 # Configure settings
 
@@ -88,8 +87,6 @@ $ mvn spring-boot:run
 / /__| (_) | |_| | (__| | | / /\/\ \ (_) \ V /| |  __/\__ \
 \____/\___/ \__,_|\___|_| |_\/    \/\___/ \_/ |_|\___||___/
 
- :: Sample application build with Spring Boot (v2.1.7.RELEASE) ::
-
  shell:>
 ```
 
@@ -104,62 +101,85 @@ AVAILABLE COMMANDS
 Admin Commands
         load-movies: Load movies
         load-ratings: Load ratings
-        rate: rate a movie
+
+Built-In Commands
+        clear: Clear the shell screen.
+        exit, quit: Exit the shell.
+        help: Display help about available commands.
+        script: Read and execute commands from a file.
+        stacktrace: Display the full stacktrace of the last error.
+
+User Commands
+        find-all-movies: list my last ratings
+        find-my-ratings: list my last ratings
+        find-top-ten-movies: Analyse top movies
+        rate-movie: Rate a movie
+        search-movie: Search for a movie
 ```
 
 ## help over command
 
 ```
-shell:>help rate
+shell:>help load-movies
 
 
 NAME
-	rate - rate a movie
+	load-movies - Load movies
 
 SYNOPSYS
-	rate [[--user-id] long]  [[--movie-id] long]  [[--rating] float]
+	load-movies [[--limit] long]
 
 OPTIONS
-	--user-id  long
+	--limit  long
 
-		[Optional, default = 1]
-
-	--movie-id  long
-
-		[Optional, default = 1]
-
-	--rating  float
-
-		[Optional, default = 1.0]
+		[Optional, default = 0]
 ```
 
-## rate a movie
+## rate a movie and list my last ratings
 
 ```
-shell:>rate 1 1 4.5
-{"rating":4.5,"movieId":1,"type":"rating","userId":1,"key":"rating::1::1","timestamp":1581551670623}
+shell:>rate-movie --movie-id 1 --user-id 1 --rating 4.98
+shell:>find-my-ratings
++--------------------------------------------------+--------+------------+
+| title                                            | rating | date       |
++--------------------------------------------------+--------+------------+
+| Toy Story (1995)                                 | 4.98   | 2021-03-17 | < latest
+| Jumanji (1995)                                   | 4      | 2021-03-17 |
+| Stigmata (1999)                                  | 3      | 2009-10-27 |
+| RoboCop 2 (1990)                                 | 2.5    | 2009-10-27 |
+| Nurse Betty (2000)                               | 3.5    | 2009-10-27 |
+| Spawn (1997)                                     | 1.5    | 2009-10-27 |
+| Weekend at Bernie's (1989)                       | 1.5    | 2009-10-27 |
+| Weird Science (1985)                             | 4.5    | 2009-10-27 |
+| Better Off Dead... (1985)                        | 4.5    | 2009-10-27 |
+| Kalifornia (1993)                                | 3.5    | 2009-10-27 |
+| Do the Right Thing (1989)                        | 4.5    | 2009-10-27 |
+| Waiting for Guffman (1996)                       | 4.5    | 2009-10-27 |
+| Falling Down (1993)                              | 4      | 2009-10-27 |
+| Running Man, The (1987)                          | 3.5    | 2009-10-27 |
+| ¡Three Amigos! (1986)                            | 4      | 2009-10-27 |
+| Event Horizon (1997)                             | 2.5    | 2009-10-27 |
+| Three Colors: Blue (Trois couleurs: Bleu) (1993) | 3.5    | 2009-10-27 |
+| Hollow Man (2000)                                | 2      | 2009-10-27 |
++--------------------------------------------------+--------+------------+
+
 ```
 
 ## have an error? don't sweat *stacktrace* will help you out!
 
 ```
 shell:>rate maverick iceman loren ipsum
-Too many arguments: the following could not be mapped to parameters: 'ipsum'
+No command found for 'rate maverick iceman loren ipsum'
 Details of the error have been omitted. You can use the stacktrace command to print the full stacktrace.
 shell:>stacktrace
-java.lang.IllegalArgumentException: Too many arguments: the following could not be mapped to parameters: 'ipsum'
-	at org.springframework.util.Assert.isTrue(Assert.java:118)
-	at org.springframework.shell.standard.StandardParameterResolver.lambda$resolve$4(StandardParameterResolver.java:218)
-	at java.util.concurrent.ConcurrentMap.computeIfAbsent(ConcurrentMap.java:324)
-	at org.springframework.shell.standard.StandardParameterResolver.resolve(StandardParameterResolver.java:138)
-	at org.springframework.shell.Shell.resolveArgs(Shell.java:316)
-	at org.springframework.shell.Shell.evaluate(Shell.java:177)
-	at org.springframework.shell.Shell.run(Shell.java:142)
+org.springframework.shell.CommandNotFound: No command found for 'rate maverick iceman loren ipsum'
+	at org.springframework.shell.Shell.evaluate(Shell.java:180)
+	at org.springframework.shell.Shell.run(Shell.java:134)
 	at org.springframework.shell.jline.InteractiveShellApplicationRunner.run(InteractiveShellApplicationRunner.java:84)
-	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:771)
-	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:761)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:319)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1214)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1203)
-	at com.couchbase.demo.couchmovies.Application.main(Application.java:14)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:795)
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:785)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:333)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1311)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at com.couchbase.demo.couchmovies.Application.main(Application.java:13)
 ```
