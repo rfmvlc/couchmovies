@@ -1,3 +1,4 @@
+
 # Pre-requisites
 
 - Couchbase Server 6.6 (default collection enabled)
@@ -50,6 +51,10 @@ com.couchbase.demo.couchmovies.home=*****
 
 ## GSI (N1QL)
 
+Using the Query workbench editor:
+
+![Captura de pantalla 2021-03-17 a las 5 25 30](https://user-images.githubusercontent.com/12693935/111414990-52cf1a00-86e1-11eb-8391-b911cd6b2e58.png)
+
 Create movies indexes:
 
 ```sql
@@ -59,6 +64,19 @@ Create ratings indexes:
 
 ```sql
 CREATE INDEX `ix_ratings_by_type` ON `movies`(`userId`,`movieId`,`rating`,`timestamp` DESC) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Rating");
+```
+
+## Analytics
+
+Using the Analytics workbench editor:
+
+![Captura de pantalla 2021-03-17 a las 5 34 16](https://user-images.githubusercontent.com/12693935/111415548-6f1f8680-86e2-11eb-9dab-f1d7d133d73c.png)
+
+Create ratings dataset and activate it:
+
+```sql
+CREATE DATASET ratings ON `movies` WHERE `type` = "com.couchbase.demo.couchmovies.service.vo.Rating";
+CONNECT LINK Local;
 ```
 
 ## FTS
