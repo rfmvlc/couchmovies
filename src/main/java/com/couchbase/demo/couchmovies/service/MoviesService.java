@@ -13,8 +13,6 @@ import com.couchbase.client.java.search.SearchQuery;
 import com.couchbase.client.java.search.queries.MatchQuery;
 import com.couchbase.client.java.search.result.ReactiveSearchResult;
 import com.couchbase.client.java.search.result.SearchRow;
-import com.couchbase.demo.couchmovies.data.MoviesRepository;
-import com.couchbase.demo.couchmovies.data.ReactiveMoviesRepository;
 import com.couchbase.demo.couchmovies.service.vo.Movie;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
 import com.couchbase.demo.couchmovies.util.Tracer;
@@ -23,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -45,31 +41,15 @@ public class MoviesService {
     private Collection collection;
     @Autowired
     private MoviesCSVParser movieParser;
-
     @Value("${com.couchbase.demo.couchmovies.top-movies-query}")
     private String topMoviesQuery;
-
-    @Autowired
-    private ReactiveMoviesRepository reactiveMoviesRepository;
-
-    @Autowired
-    private MoviesRepository moviesRepository;
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public MoviesService() {
     }
 
     @Async
-    public void load(long limit) {
-
-        Tracer tracer = new Tracer(logger, "batchUpsert");
-        reactiveMoviesRepository.saveAll(movieParser.parseFromCsvFile(limit))
-                .doOnNext(tracer::onNext).doOnError(tracer::onError).doOnComplete(tracer::onComplete).subscribe();
-    }
-
-    @Async
-    public void loadSDK(long limit, boolean durability) {
+    public void load(long limit, boolean durability) {
 
         Tracer tracer = new Tracer(logger, "batchUpsert");
         UpsertOptions upsertOptions = upsertOptions();
@@ -81,39 +61,9 @@ public class MoviesService {
                 .doOnNext(tracer::onNext).doOnError(tracer::onError).doOnComplete(tracer::onComplete).subscribe();
     }
 
-    public void getMovieSDK(long movieId) {
-        Movie movie = new Movie(movieId);
-        System.out.println(collection.get(movie.getId()).toString());
-
-    }
-
     public void getMovie(long movieId) {
         Movie movie = new Movie(movieId);
-        System.out.println(moviesRepository.findById(movie.getId()).get().toString());
-
-    }
-
-    public void findAll(int page, int pageSize, long movieId) {
-
-        //Page<Movie> movies = moviesRepository.findAll(PageRequest.of(page, pageSize));
-
-        Page<Movie> movies = moviesRepository.findAllByMovieIdGreaterThan(movieId, PageRequest.of(page, pageSize));
-
-        AsciiTable table = new AsciiTable();
-        table.setMaxColumnWidth(50);
-        table.getColumns().add(new AsciiTable.Column("movieId"));
-        table.getColumns().add(new AsciiTable.Column("title"));
-
-        for (Movie m : movies) {
-
-            AsciiTable.Row row = new AsciiTable.Row();
-            table.getData().add(row);
-            row.getValues().add(String.valueOf(m.getMovieId()));
-            row.getValues().add(m.getTitle());
-        }
-
-        table.calculateColumnWidth();
-        table.render();
+        System.out.println(collection.get(movie.getId()).toString());
 
     }
 

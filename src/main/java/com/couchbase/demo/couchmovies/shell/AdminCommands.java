@@ -19,20 +19,13 @@ public class AdminCommands {
     RatingsService ratingsService;
 
     @ShellMethod(value = "Load movies")
-    public void loadMovies(@ShellOption(defaultValue = "0") long limit, boolean sdk, boolean durability) {
-        if (!sdk)
-            moviesService.load(limit);
-        else
-            moviesService.loadSDK(limit, durability);
+    public void loadMovies(@ShellOption(defaultValue = "0") long limit, boolean durability) {
+        moviesService.load(limit, durability);
     }
 
     @ShellMethod(value = "Load ratings")
-    public void loadRatings(@ShellOption(defaultValue = "0") int limit, boolean sdk, boolean durability) {
-
-        if (!sdk)
-            ratingsService.load(limit);
-        else
-            ratingsService.loadSDK(limit, durability);
+    public void loadRatings(@ShellOption(defaultValue = "0") int limit, boolean durability) {
+        ratingsService.load(limit, durability);
     }
 
 }

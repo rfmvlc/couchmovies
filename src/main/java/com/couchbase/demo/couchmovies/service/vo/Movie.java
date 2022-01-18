@@ -14,47 +14,60 @@ public class Movie {
     private String title;
     private String type;
     private Number movieId;
+
     private Movie() {
         setType(MOVIE_TYPE);
     }
+
     public Movie(Number movieId) {
         this();
         setMovieId(movieId);
         setId(format(MOVIE_KEY_MASK, movieId));
     }
+
     public String getId() {
         return id;
     }
-    public void setId(String id) { this.id = id; }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public List<String> getGenres() {
         return genres;
     }
+
     public void setGenres(List<String> genres) {
         this.genres = genres;
     }
+
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
+
     public Number getMovieId() {
         return movieId;
     }
+
     public void setMovieId(Number movieId) {
         this.movieId = movieId;
     }
 
 
-
     @Override
-    public String toString(){
+    public String toString() {
         return org.apache.commons.lang3.builder.ReflectionToStringBuilder.toString(this);
     }
 

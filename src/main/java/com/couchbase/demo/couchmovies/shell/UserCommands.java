@@ -19,11 +19,9 @@ public class UserCommands {
     MoviesService moviesService;
 
     @ShellMethod(value = "Rate a movie")
-    public void rateMovie(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "3") float rating, boolean fail, boolean subDoc) {
-        if (!subDoc)
-            ratingsService.rate(userId, movieId, rating);
-        else
-            ratingsService.rateSubDoc(userId, movieId, rating, fail);
+    public void rateMovie(@ShellOption(defaultValue = "1") long userId, @ShellOption(defaultValue = "1") long movieId, @ShellOption(defaultValue = "3") float rating) {
+
+        ratingsService.rate(userId, movieId, rating);
 
     }
 
@@ -32,19 +30,13 @@ public class UserCommands {
         if (!sdk)
             moviesService.getMovie(movieId);
         else
-            moviesService.getMovieSDK(movieId);
+            moviesService.getMovie(movieId);
 
     }
 
     @ShellMethod(value = "list my last ratings")
     public void findMyRatings(@ShellOption(defaultValue = "1") long userId) {
         ratingsService.findMyRatings(userId);
-    }
-
-    @ShellMethod(value = "Find movies paginated and sorted")
-    public void findAllMovies(@ShellOption(defaultValue = "0") int page, @ShellOption(defaultValue = "10") int pageSize, @ShellOption(defaultValue = "0") long movieId) {
-
-        moviesService.findAll(page, pageSize, movieId);
     }
 
     @ShellMethod("Search for a movie")

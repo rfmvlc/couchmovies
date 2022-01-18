@@ -1,6 +1,5 @@
 package com.couchbase.demo.couchmovies.service;
 
-import com.couchbase.client.core.error.subdoc.PathExistsException;
 import com.couchbase.client.core.msg.kv.DurabilityLevel;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
@@ -9,8 +8,6 @@ import com.couchbase.client.java.kv.MutateInSpec;
 import com.couchbase.client.java.kv.UpsertOptions;
 import com.couchbase.client.java.query.QueryOptions;
 import com.couchbase.client.java.query.ReactiveQueryResult;
-import com.couchbase.demo.couchmovies.data.RatingsRepository;
-import com.couchbase.demo.couchmovies.data.ReactiveRatingsRepository;
 import com.couchbase.demo.couchmovies.service.vo.Rating;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
 import com.couchbase.demo.couchmovies.util.Tracer;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static com.couchbase.client.java.kv.UpsertOptions.upsertOptions;
 
@@ -34,42 +30,24 @@ public class RatingsService {
 
     @Autowired
     RatingsCSVParser ratingParser;
-
-    @Autowired
-    private RatingsRepository ratingsRepository;
-
-    @Autowired
-    private ReactiveRatingsRepository reactiveRatingsRepository;
-
-    @Value("${com.couchbase.demo.couchmovies.my-ratings-query}")
-    private String myRatingsQuery;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     Cluster cluster;
-
     @Autowired
     @Qualifier("ratingsCollection")
     Collection collection;
+    @Value("${com.couchbase.demo.couchmovies.my-ratings-query}")
+    private String myRatingsQuery;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public RatingsService() {
     }
 
     @Async
-    public void load(long limit) {
-        Tracer tracer = new Tracer(logger, "load");
-        reactiveRatingsRepository.saveAll(ratingParser.parseFromCsvFile(limit))
-                .doOnNext(tracer::onNext).doOnError(tracer::onError).
-                doOnComplete(tracer::onComplete).subscribe();
-    }
-
-    @Async
-    public void loadSDK(long limit, boolean durability) {
+    public void load(long limit, boolean durability) {
 
         Tracer tracer = new Tracer(logger, "batchUpsert");
         UpsertOptions upsertOptions = upsertOptions();
-        if(durability)
+        if (durability)
             upsertOptions.durability(DurabilityLevel.PERSIST_TO_MAJORITY);
 
         ratingParser.parseFromCsvFile(limit)
@@ -78,29 +56,14 @@ public class RatingsService {
     }
 
     public void rate(long userId, long movieId, float rating) {
-        Rating r = new Rating(userId, movieId, rating);
-        ratingsRepository.save(r);
-    }
-
-    public void rateSubDoc(long userId, long movieId, float rating, boolean fail) {
 
         Rating r = new Rating(userId, movieId, rating);
         r.setTimestamp(System.currentTimeMillis());
 
-        if (!fail) {
-            collection.mutateIn(r.getId(), Arrays.asList(
-                    MutateInSpec.upsert("rating", r.getRating()),
-                    MutateInSpec.upsert("timestamp", r.getTimestamp())
-            ));
-        } else {
-            try {
-                collection.mutateIn(r.getId(), Collections.singletonList(
-                        MutateInSpec.insert("rating", r.getRating())
-                ));
-            } catch (PathExistsException err) {
-                System.out.println("insertFunc: exception caught, path already exists");
-            }
-        }
+        collection.mutateIn(r.getId(), Arrays.asList(
+                MutateInSpec.upsert("rating", r.getRating()),
+                MutateInSpec.upsert("timestamp", r.getTimestamp())
+        ));
 
     }
 
@@ -115,16 +78,13 @@ public class RatingsService {
         table.getColumns().add(new AsciiTable.Column("rating"));
         table.getColumns().add(new AsciiTable.Column("date"));
 
-
         for (JsonObject value : results) {
-
             AsciiTable.Row row = new AsciiTable.Row();
             table.getData().add(row);
             row.getValues().add(value.get("movieId").toString());
             row.getValues().add(value.get("title").toString());
             row.getValues().add(value.get("rating").toString());
             row.getValues().add(value.get("date").toString());
-
         }
 
         table.calculateColumnWidth();

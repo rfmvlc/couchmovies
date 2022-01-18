@@ -9,7 +9,7 @@ import static java.lang.String.format;
 public class Rating {
 
     private static final String RATING_KEY_MASK = "rating::%s::%s";
-    private static final String RATING_TYPE =  "com.couchbase.demo.couchmovies.service.vo.Rating";
+    private static final String RATING_TYPE = "com.couchbase.demo.couchmovies.service.vo.Rating";
     private @Min(1) long userId;
     private @Min(1) long movieId;
     private @Min(1) long timestamp;
@@ -83,9 +83,8 @@ public class Rating {
     }
 
 
-
     @Override
-    public String toString(){
+    public String toString() {
         return org.apache.commons.lang3.builder.ReflectionToStringBuilder.toString(this);
     }
 

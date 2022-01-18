@@ -9,15 +9,12 @@ import com.couchbase.client.java.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
-import org.springframework.data.couchbase.repository.config.EnableReactiveCouchbaseRepositories;
 
 import java.time.Duration;
 
 
 @Configuration
-@EnableReactiveCouchbaseRepositories
-public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
+public class CouchbaseConfig {
 
 
     @Value("${com.couchbase.demo.couchmovies.connection-string}")
@@ -61,28 +58,9 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
         return bucket.scope("couchmovies").collection("ratings");
     }
 
-    @Override
-    public String getConnectionString() {
-        return connectionString;
-    }
-
-    @Override
-    public String getUserName() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
     public String getBucketName() {
         return "movies";
     }
 
-    @Override
-    public String typeKey() {
-        return "type";
-    }
+
 }

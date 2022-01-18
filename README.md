@@ -1,14 +1,12 @@
-
 # Pre-requisites
 
 - Couchbase Server 6.6 (default collection enabled)
-	- Data service
-	- Query service
-	- Index service
-	- Analytics service
+    - Data service
+    - Query service
+    - Index service
+    - Analytics service
 - Java 1.8.x
 - Maven 3.x
-- Spring Data 4.x
 
 > Setup your environment as described on Java SDK docs [here](https://docs.couchbase.com/java-sdk/current/hello-world/start-using-sdk.html)
 
@@ -28,10 +26,9 @@ $ wget -c http://files.grouplens.org/datasets/movielens/ml-latest.zip -O movies.
 $  unzip -j "movies.zip" -d ~
 ``` 
 
-# Create movies bucket 
+# Create movies bucket
 
 > Create "movies" bucket as described on Rest APIs docs [here](https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html)
-
 
 # Configure settings
 
@@ -62,12 +59,13 @@ Using the Query workbench editor:
 Create movies indexes:
 
 ```sql
-CREATE INDEX `ix_movies_by_type` ON `movies`(`movieId`) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Movie");
+CREATE INDEX `ix_movies_by_type` ON `movies`(`movieId`) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Movie");```
+
 ```
 Create ratings indexes:
 
 ```sql
-CREATE INDEX `ix_ratings_by_type` ON `movies`(`userId`,`movieId`,`rating`,`timestamp` DESC) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Rating");
+CREATE INDEX `ix_ratings_by_type` ON `movies`.`couchmovies`.`ratings`(`userId`,`movieId`,`rating`,`timestamp` DESC) WHERE (`type` = "com.couchbase.demo.couchmovies.service.vo.Rating") ```
 ```
 
 ## Analytics
@@ -79,8 +77,7 @@ Using the Analytics workbench editor:
 Create ratings dataset and activate it:
 
 ```sql
-CREATE DATASET ratings ON `movies` WHERE `type` = "com.couchbase.demo.couchmovies.service.vo.Rating";
-CONNECT LINK Local;
+CREATE DATASET ratings ON `movies`.couchmovies.ratings WHERE `type` = "com.couchbase.demo.couchmovies.service.vo.Rating";
 ```
 
 ## FTS
@@ -88,7 +85,6 @@ CONNECT LINK Local;
 Create FTS index (couchmovies-title-index) using as type following this confiiguration:
 
 ![Captura de pantalla 2021-03-17 a las 5 48 02](https://user-images.githubusercontent.com/12693935/111416488-59ab5c00-86e4-11eb-8cff-96a93cac1310.png)
-
 
 # Run the application
 
