@@ -13,10 +13,11 @@ import com.couchbase.demo.couchmovies.data.RatingsRepository;
 import com.couchbase.demo.couchmovies.data.ReactiveRatingsRepository;
 import com.couchbase.demo.couchmovies.service.vo.Rating;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
-import com.couchbase.demo.couchmovies.util.FluxTracer;
+import com.couchbase.demo.couchmovies.util.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ import static com.couchbase.client.java.kv.UpsertOptions.upsertOptions;
 public class RatingsService {
 
     @Autowired
-    RatingsParser ratingParser;
+    RatingsCSVParser ratingParser;
 
     @Autowired
     private RatingsRepository ratingsRepository;
@@ -49,6 +50,7 @@ public class RatingsService {
     Cluster cluster;
 
     @Autowired
+    @Qualifier("ratingsCollection")
     Collection collection;
 
     public RatingsService() {
@@ -56,21 +58,23 @@ public class RatingsService {
 
     @Async
     public void load(long limit) {
-        FluxTracer fluxTracer = new FluxTracer(logger, "load");
-        reactiveRatingsRepository.saveAll(ratingParser.parseFromCsvFile(limit)).doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+        Tracer tracer = new Tracer(logger, "load");
+        reactiveRatingsRepository.saveAll(ratingParser.parseFromCsvFile(limit))
+                .doOnNext(tracer::onNext).doOnError(tracer::onError).
+                doOnComplete(tracer::onComplete).subscribe();
     }
 
     @Async
     public void loadSDK(long limit, boolean durability) {
 
-        FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        Tracer tracer = new Tracer(logger, "batchUpsert");
         UpsertOptions upsertOptions = upsertOptions();
         if(durability)
             upsertOptions.durability(DurabilityLevel.PERSIST_TO_MAJORITY);
 
         ratingParser.parseFromCsvFile(limit)
                 .flatMap(rating -> collection.reactive().upsert(rating.getId(), rating, upsertOptions))
-                .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+                .doOnNext(tracer::onNext).doOnError(tracer::onError).doOnComplete(tracer::onComplete).subscribe();
     }
 
     public void rate(long userId, long movieId, float rating) {

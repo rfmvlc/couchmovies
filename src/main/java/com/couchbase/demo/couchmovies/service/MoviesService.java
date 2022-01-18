@@ -2,7 +2,6 @@ package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.core.msg.kv.DurabilityLevel;
-import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.analytics.AnalyticsOptions;
@@ -18,10 +17,11 @@ import com.couchbase.demo.couchmovies.data.MoviesRepository;
 import com.couchbase.demo.couchmovies.data.ReactiveMoviesRepository;
 import com.couchbase.demo.couchmovies.service.vo.Movie;
 import com.couchbase.demo.couchmovies.util.AsciiTable;
-import com.couchbase.demo.couchmovies.util.FluxTracer;
+import com.couchbase.demo.couchmovies.util.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,9 +37,14 @@ public class MoviesService {
     public static final String MOVIES_FTS_INDEX = "couchmovies-title-index";
     public static final String MOVIES_TITLE_FIELD = "title";
     public static final String MOVIE_KEY_PREFIX = "movie::";
-    private final Cluster cluster;
-    private final Collection collection;
-    private final MoviesParser movieParser;
+
+    @Autowired
+    private Cluster cluster;
+    @Autowired
+    @Qualifier("moviesCollection")
+    private Collection collection;
+    @Autowired
+    private MoviesCSVParser movieParser;
 
     @Value("${com.couchbase.demo.couchmovies.top-movies-query}")
     private String topMoviesQuery;
@@ -52,33 +57,28 @@ public class MoviesService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public MoviesService(@Autowired Cluster cluster,
-                         @Autowired Bucket bucket,
-                         @Autowired MoviesParser movieParser) {
-        this.cluster = cluster;
-        this.collection = bucket.defaultCollection();
-        this.movieParser = movieParser;
+    public MoviesService() {
     }
 
     @Async
     public void load(long limit) {
 
-        FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        Tracer tracer = new Tracer(logger, "batchUpsert");
         reactiveMoviesRepository.saveAll(movieParser.parseFromCsvFile(limit))
-                .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+                .doOnNext(tracer::onNext).doOnError(tracer::onError).doOnComplete(tracer::onComplete).subscribe();
     }
 
     @Async
     public void loadSDK(long limit, boolean durability) {
 
-        FluxTracer fluxTracer = new FluxTracer(logger, "batchUpsert");
+        Tracer tracer = new Tracer(logger, "batchUpsert");
         UpsertOptions upsertOptions = upsertOptions();
-        if(durability)
+        if (durability)
             upsertOptions.durability(DurabilityLevel.PERSIST_TO_MAJORITY);
 
         movieParser.parseFromCsvFile(limit)
                 .flatMap(movie -> collection.reactive().upsert(movie.getId(), movie, upsertOptions))
-                .doOnNext(fluxTracer::onNext).doOnError(fluxTracer::onError).doOnComplete(fluxTracer::onComplete).subscribe();
+                .doOnNext(tracer::onNext).doOnError(tracer::onError).doOnComplete(tracer::onComplete).subscribe();
     }
 
     public void getMovieSDK(long movieId) {

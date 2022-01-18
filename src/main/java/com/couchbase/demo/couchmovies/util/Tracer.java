@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class FluxTracer<T> {
+public class Tracer<T> {
 
     public static final String PROGRESS_STATUS_CHECKPOINT = "CHECKPOINT";
     public static final String PROGRESS_STATUS_START = "START ----------";
@@ -18,7 +18,7 @@ public class FluxTracer<T> {
     private AtomicInteger oks, errors;
     private String task;
 
-    public FluxTracer(Logger logger, String task, int checkpoint) {
+    public Tracer(Logger logger, String task, int checkpoint) {
 
         this.logger = logger;
         this.checkpoint = checkpoint;
@@ -29,7 +29,7 @@ public class FluxTracer<T> {
 
     }
 
-    public FluxTracer(Logger logger, String task) {
+    public Tracer(Logger logger, String task) {
         this(logger, task, DEFAULT_CHECKPOINT);
     }
 

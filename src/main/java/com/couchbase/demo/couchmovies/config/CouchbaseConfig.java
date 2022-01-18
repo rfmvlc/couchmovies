@@ -1,14 +1,11 @@
 package com.couchbase.demo.couchmovies.config;
 
 
-import com.couchbase.client.core.env.CompressionConfig;
 import com.couchbase.client.core.env.PasswordAuthenticator;
-import com.couchbase.client.core.env.ThresholdRequestTracerConfig;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.Collection;
-import com.couchbase.client.java.env.ClusterEnvironment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +22,6 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
     @Value("${com.couchbase.demo.couchmovies.connection-string}")
     private String connectionString;
-
-    @Value("${com.couchbase.demo.couchmovies.bucket-name}")
-    private String bucketName;
 
     @Value("${com.couchbase.demo.couchmovies.username}")
     private String username;
@@ -52,14 +46,19 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
     @Bean
     public Bucket bucket(Cluster cluster) {
-        Bucket bucket = cluster.bucket(bucketName);
+        Bucket bucket = cluster.bucket(getBucketName());
         bucket.waitUntilReady(Duration.ofSeconds(5));
         return bucket;
     }
 
     @Bean
-    public Collection collection(Bucket bucket) {
-        return bucket.defaultCollection();
+    public Collection moviesCollection(Bucket bucket) {
+        return bucket.scope("couchmovies").collection("movies");
+    }
+
+    @Bean
+    public Collection ratingsCollection(Bucket bucket) {
+        return bucket.scope("couchmovies").collection("ratings");
     }
 
     @Override
@@ -79,7 +78,7 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
     @Override
     public String getBucketName() {
-        return bucketName;
+        return "movies";
     }
 
     @Override

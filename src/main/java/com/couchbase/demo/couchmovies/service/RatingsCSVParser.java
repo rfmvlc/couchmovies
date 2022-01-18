@@ -1,12 +1,13 @@
 package com.couchbase.demo.couchmovies.service;
 
 import com.couchbase.demo.couchmovies.service.vo.Rating;
+import com.couchbase.demo.couchmovies.util.CSVReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 @Component
-public class RatingsParser implements FluxCsvReader {
+public class RatingsCSVParser implements CSVReader {
 
     @Value("${com.couchbase.demo.couchmovies.ratingsCsv}")
     private String ratingsCsv;
